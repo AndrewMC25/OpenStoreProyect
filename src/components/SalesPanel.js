@@ -187,7 +187,7 @@ const SalesPanel = () => {
                         alignItems: 'center'
                     }}
                 >
-                    {selectedProduct.length ? <ProductCard products={selectedProduct}/> : 
+                    {selectedProduct.length ? <ProductCard title='Product' products={selectedProduct}/> : 
                         <Typography
                             color='#8c8c8c'
                             variant='h5'
