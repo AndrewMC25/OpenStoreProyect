@@ -10,7 +10,7 @@ const Inventory = () => {
     return(
         <Box>
             {products && (
-                <ProductCard products={products} />
+                <ProductCard title='All Products' products={products} />
             )}
             {loading && <SimpleBackdrop open={true}/>}
         </Box>

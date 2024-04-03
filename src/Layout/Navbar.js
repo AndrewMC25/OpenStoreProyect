@@ -1,5 +1,5 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import { AppBar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, IconButton, Toolbar, Typography } from '@mui/material';
 
 const Navbar = ({ navMenu, setNavMenu }) => {
   return (
@@ -34,9 +34,6 @@ const Navbar = ({ navMenu, setNavMenu }) => {
               OpenStore
             </strong>
           </Typography>
-          <Button color="inherit">
-            Login
-          </Button>
         </Toolbar>
       </AppBar>
       <Toolbar />
