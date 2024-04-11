@@ -132,21 +132,21 @@ const SalesPanel = () => {
                         <Typography variant="h5" >Sales Panel</Typography>
                         <br />
                         <TextField
-                            name="barcode"
-                            // minLength={2}
-                            // debounceTimeout={1000}
-                            value={formik.values.barcode}
-                            onChange={e => inputOnChange('barcode', e.target.value)}
-                            // element={TextField}
                             label="Barcode"
-                            type="number"
-                            id="barcode-field"
                             variant="outlined"
-                            autoFocus
+                            type="number"
+                            name="barcode"
                             style={{
                                 width: '100%',
                                 margin: '8px 0px 0px 0px'
                             }}
+                            onChange={e => inputOnChange('barcode', e.target.value)}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.barcode}
+                            error={formik.errors.barcode}
+                            helperText={formik.errors.barcode}
+                            id="barcode-field"
+                            autoFocus
                         />
                         <TextField
                             label="Amount"
