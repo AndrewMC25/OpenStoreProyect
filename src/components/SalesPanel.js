@@ -131,16 +131,17 @@ const SalesPanel = () => {
                     >
                         <Typography variant="h5" >Sales Panel</Typography>
                         <br />
-                        <DebounceInput
+                        <TextField
                             name="barcode"
-                            minLength={2}
-                            debounceTimeout={1000}
+                            // minLength={2}
+                            // debounceTimeout={1000}
                             value={formik.values.barcode}
                             onChange={e => inputOnChange('barcode', e.target.value)}
-                            element={TextField}
+                            // element={TextField}
                             label="Barcode"
                             type="number"
                             id="barcode-field"
+                            variant="outlined"
                             autoFocus
                             style={{
                                 width: '100%',
