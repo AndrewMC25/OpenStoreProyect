@@ -12,6 +12,7 @@ import FetchAllProducts from '../hooks/Fetchers/FetchAllProducts'
 import ProductCard from '../Layout/ProductCard'
 import ShoppingCart from "../Layout/ShoppingCart";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import Link from "next/link";
 
 const SalesPanel = () => {
 
@@ -131,22 +132,22 @@ const SalesPanel = () => {
                     >
                         <Typography variant="h5" >Sales Panel</Typography>
                         <br />
-                        <TextField
-                            label="Barcode"
-                            variant="outlined"
-                            type="number"
+                        <DebounceInput
                             name="barcode"
+                            minLength={2}
+                            debounceTimeout={1000}
+                            value={formik.values.barcode}
+                            onChange={e => inputOnChange('barcode', e.target.value)}
+                            element={TextField}
+                            label="Barcode"
+                            type="number"
+                            id="barcode-field"
+                            variant="outlined"
+                            autoFocus
                             style={{
                                 width: '100%',
                                 margin: '8px 0px 0px 0px'
                             }}
-                            onChange={e => inputOnChange('barcode', e.target.value)}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.barcode}
-                            error={formik.errors.barcode}
-                            helperText={formik.errors.barcode}
-                            id="barcode-field"
-                            autoFocus
                         />
                         <TextField
                             label="Amount"
@@ -232,6 +233,11 @@ const SalesPanel = () => {
                     </Stack>
                 }
             </Stack>
+            <Link href='/SignUp'>
+                <Typography>
+                    Sign up
+                </Typography>
+            </Link>
         </Stack>
     )
 }

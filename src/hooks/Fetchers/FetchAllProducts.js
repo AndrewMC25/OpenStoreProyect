@@ -6,7 +6,6 @@ const FetchAllProducts = ( updateDOM ) => {
     const { enqueueSnackbar } = useSnackbar()
 
     const [products, setProducts] = useState(null)
-    const [productsError, setProductsError] = useState(null)
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
@@ -16,15 +15,13 @@ const FetchAllProducts = ( updateDOM ) => {
                 .from('Product')
                 .select()
                 .is('visible', true)
-
             if (error) {
-                setProductsError(error.message)
+                console.log(error)
                 setProducts(null)
-                enqueueSnackbar(productsError, { variant: 'error' })
+                enqueueSnackbar(error.message, { variant: 'error' })
             }
             if (data) {
                 setProducts(data)
-                setProductsError(null)
             }
         }
         fecthProducts()
