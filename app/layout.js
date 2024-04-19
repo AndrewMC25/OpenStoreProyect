@@ -7,6 +7,7 @@ import '@fontsource/roboto/700.css';
 import NavMenu from "@/src/Layout/NavMenu";
 import { CssBaseline } from "@mui/material";
 import AlertBox from '../src/Layout/AlertBox'
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -23,7 +24,9 @@ export default function RootLayout({ children }) {
         <AlertBox>
           <CssBaseline />
           <NavMenu/>
-          {children}
+          <GoogleOAuthProvider clientId="504897621923-epbrurgigh04jv448bnit08lh1nnifoa.apps.googleusercontent.com">
+            {children}
+          </GoogleOAuthProvider>
         </AlertBox>
       </body>
     </html>

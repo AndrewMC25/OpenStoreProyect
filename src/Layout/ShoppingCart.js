@@ -1,8 +1,10 @@
-import { Box, Icon, IconButton, Stack, Typography } from "@mui/material";
+import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import AlertDialog from "./AlertDialog";
+import TotalToPay from '../utils/TotalToPay';
 import EditCartProducts from '../components/EditCartProducts'
 import DeleteIcon from '@mui/icons-material/Delete';
+import SendIcon from '@mui/icons-material/Send';
 
 const styles = {
   detallesCarro: {
@@ -29,19 +31,26 @@ const ShoppingCart = ({ cart, subtotal, setCart, updateDOM, setUpdateDOM, handle
   const [productCartId, setProductCartId] = useState()
   const [cartProductAmount, setCartProductAmount] = useState()
   const [newAmount, setNewAmount] = useState()
+  const [bill, setBill] = useState()
 
-  const handleOpen = (id, amount) => {
+  const handleOpenProductOptions = (id, amount) => {
     setProductCartOptions(true)
     setProductCartId(id)
     setCartProductAmount(amount)
   }
-  const handleClose = () => {
+  const handleCloseProductOptions = () => {
     setProductCartOptions(false)
   }
   const handleDelete = (id) => {
     const newCart = cart.filter(item => item.id !== id)
     setCart(newCart)
-    handleClose()
+    handleCloseProductOptions()
+  }
+  const handleOpenBill = () => {
+    setBill(true)
+  }
+  const handleCloseBill = () => {
+    setBill(false)
   }
 
   useEffect(() => {
@@ -103,7 +112,7 @@ const ShoppingCart = ({ cart, subtotal, setCart, updateDOM, setUpdateDOM, handle
                 borderBottom: '1px solid #DDD',
                 cursor: 'pointer'
               }}
-              onClick={() => {handleOpen(x.id, x.amount)}}
+              onClick={() => {handleOpenProductOptions(x.id, x.amount)}}
             >
               <ul style={styles.ul}>
                 <li style={styles.producto} key={x.barcode}>
@@ -155,41 +164,50 @@ const ShoppingCart = ({ cart, subtotal, setCart, updateDOM, setUpdateDOM, handle
         ))}
         <Box
           style={{
-            display: 'table',
-            content: "",
-            lineHeight: 0,
-            fontSize: 0,
             display: 'flex',
             flexDirection: 'row',
             margin: '20px 0px 10px',
-            justifyContent: 'flex-end'
+            justifyContent: 'space-between',
+            alignItems: 'center'
           }}
         >
-          <Typography
-            sx={{
-              textRendering: 'optimizeLegibility',
-              fontSize: '18px',
-              lineHeight: '24px',
-              boxSizing: 'border-box',
-              textAlign: 'right',
-              margin: '0px 8px 0px 0px'
-            }}
+          <Button
+            variant="contained"
+            endIcon={<SendIcon />}
+            onClick={handleOpenBill}
           >
-            Subtotal:
-          </Typography>
-          <Typography
-            sx={{
-              textRendering: 'optimizeLegibility',
-              whiteSpace: 'nowrap',
-              fontSize: '18px',
-              lineHeight: '24px',
-              boxSizing: 'border-box',
-              textAlign: 'right',
-              fontWeight: 700
-            }}
+            Go to pay
+          </Button>
+          <Box
+            display='flex'
+            flexDirection='row'
           >
-            ${subtotal.toLocaleString('es', opciones)}
-          </Typography>
+            <Typography
+              sx={{
+                textRendering: 'optimizeLegibility',
+                fontSize: '18px',
+                lineHeight: '24px',
+                boxSizing: 'border-box',
+                textAlign: 'right',
+                margin: '0px 8px 0px 0px'
+              }}
+            >
+              Subtotal:
+            </Typography>
+            <Typography
+              sx={{
+                textRendering: 'optimizeLegibility',
+                whiteSpace: 'nowrap',
+                fontSize: '18px',
+                lineHeight: '24px',
+                boxSizing: 'border-box',
+                textAlign: 'right',
+                fontWeight: 700
+              }}
+            >
+              ${subtotal.toLocaleString('es', opciones)}
+            </Typography>
+          </Box>
         </Box>
         <AlertDialog
           title='Edit'
@@ -203,9 +221,15 @@ const ShoppingCart = ({ cart, subtotal, setCart, updateDOM, setUpdateDOM, handle
             </IconButton>
           }
           open={productCartOptions}
-          handleClose={handleClose}
+          handleClose={handleCloseProductOptions}
         >
-          <EditCartProducts updateDOM={updateDOM} setUpdateDOM={setUpdateDOM} amount={cartProductAmount} id={productCartId} handleClose={handleClose} setNewAmount={setNewAmount} />
+          <EditCartProducts updateDOM={updateDOM} setUpdateDOM={setUpdateDOM} amount={cartProductAmount} id={productCartId} handleClose={handleCloseProductOptions} setNewAmount={setNewAmount} />
+        </AlertDialog>
+        <AlertDialog
+          open={bill}
+          handleClose={handleCloseBill}
+        >
+          <TotalToPay cart={cart} subtotal={subtotal} handleClose={handleCloseBill} />
         </AlertDialog>
     </Stack>
   );
