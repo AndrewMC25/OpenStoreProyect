@@ -28,6 +28,7 @@
     "react-debounce-input": "^3.3.0",
     "react-dom": "^18",
     "styled-components": "^6.1.8",
+    "supabase": "^1.162.4",
     "yup": "^1.4.0"
   },
   "devDependencies": {

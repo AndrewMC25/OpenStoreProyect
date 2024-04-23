@@ -24,9 +24,11 @@ export default function RootLayout({ children }) {
         <AlertBox>
           <CssBaseline />
           <NavMenu/>
-          <GoogleOAuthProvider clientId="504897621923-epbrurgigh04jv448bnit08lh1nnifoa.apps.googleusercontent.com">
-            {children}
-          </GoogleOAuthProvider>
+            <GoogleOAuthProvider
+              clientId="504897621923-epbrurgigh04jv448bnit08lh1nnifoa.apps.googleusercontent.com"
+            >
+              {children}
+            </GoogleOAuthProvider>
         </AlertBox>
       </body>
     </html>
