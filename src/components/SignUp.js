@@ -1,12 +1,11 @@
 "use client";
 
-import TokenControler from '../hooks/TokenControler'
-import { parseJwt } from '../utils/utils'
+import HandleAccess from '../service/HandleAccessService'
+
 import { GoogleLogin } from '@react-oauth/google';
 import { Box, Stack, Typography } from "@mui/material"
-// 
-// axios request GET
-// save token in localstorage or in a cookie
+
+
 const SignUp = () => {
     return(
         <Stack
@@ -42,8 +41,7 @@ const SignUp = () => {
                 <GoogleLogin
                     onSuccess={
                          credentialResponse => {
-                            const res = parseJwt(credentialResponse.credential)
-                            console.log(res)
+                            HandleAccess(credentialResponse.credential)
                         }
                     }
                     auto_select='true'

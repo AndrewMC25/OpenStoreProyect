@@ -1,7 +1,7 @@
-import SalesPanel from '../src/components/SalesPanel'
+import HomePage from "../src/components/HomePage"
 
 export default function Home() {
-  return (
-      <SalesPanel/>
-  );
+    return(
+        <HomePage/>
+    )
 }
