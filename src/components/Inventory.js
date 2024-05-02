@@ -3,7 +3,7 @@
 import { Box } from "@mui/material"
 import ProductCard from "../Layout/ProductCard"
 import SimpleBackdrop from '../Layout/Backdrop'
-import { useProducts } from "@/src/hooks/FetchItems"
+import { useProducts } from '../hooks/useProducts'
 
 const Inventory = () => {
     const {products, loading} = useProducts()
