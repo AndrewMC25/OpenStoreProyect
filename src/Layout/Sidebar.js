@@ -63,7 +63,7 @@ const Sidebar = ({ navMenu, setNavMenu }) => {
                     width: '266px'
                 }}
             >
-                <Link href='/' >
+                <Link href='/SalesPanel' >
                     <Button
                         onClick={() => { setNavMenu(false) }}
                         variant="text"

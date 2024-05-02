@@ -2,15 +2,14 @@
 
 import { Box } from "@mui/material"
 import FormBrand from "../../src/components/FormBrand"
-import FetchAllBrands from '../../src/hooks/Fetchers/FetchAllBrands'
 import SimpleBackdrop from '../../src/Layout/Backdrop'
-import FormEditBrand from '../../src/utils/EditBrand'
+import FormEditBrand from '../../src/components/EditBrand'
 import AlertDialog from '../../src/Layout/AlertDialog'
 import { useState } from "react"
+import { useBrands } from "@/src/hooks/FetchItems"
 
 const BrandsMenu = () => {
-    const [updateDOM, setUpdateDOM] = useState()
-    const { brands, loading } = FetchAllBrands(updateDOM)
+    const { brands, loading } = useBrands()
     const [open, setOpen] = useState(false)
     const [rowBrand, setRowBrand] = useState()
 
@@ -21,16 +20,15 @@ const BrandsMenu = () => {
     const handleClose = () => {
         setOpen(false)
     }
-
     return(
         <Box>
-            <FormBrand brands={brands} handleClickOpen={handleOpen} />
+            <FormBrand brands={brands} handleClickOpen={handleOpen} isTableVisible={true} />
             <AlertDialog
                 title='Edit Brand'
                 open={open}
                 handleClose={handleClose}
             >
-                <FormEditBrand rowBrand={rowBrand} handleClose={handleClose} setUpdateDOM={setUpdateDOM} />
+                <FormEditBrand rowBrand={rowBrand} handleClose={handleClose} />
             </AlertDialog>
             {loading && <SimpleBackdrop open={true}/>}
         </Box>

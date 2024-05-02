@@ -2,21 +2,18 @@
 
 import { Box } from "@mui/material"
 import FormProduct from "../../src/components/FormProduct"
-import FetchAllProducts from '../../src/hooks/Fetchers/FetchAllProducts'
-import FetchAllPresentations from '../../src/hooks/Fetchers/FetchAllPresentations'
-import FetchAllBrands from '../../src/hooks/Fetchers/FetchAllBrands'
-import FetchAllUnits from '../../src/hooks/Fetchers/FetchAllUnits'
+import { usePresentations, useBrands, useUnits } from "@/src/hooks/FetchItems"
+import { useProducts } from "@/src/hooks/useProducts"
 import SimpleBackdrop from '../../src/Layout/Backdrop'
-import FormEditProduct from '../../src/utils/EditProduct'
+import FormEditProduct from '../../src/components/EditProduct'
 import AlertDialog from '../../src/Layout/AlertDialog'
 import { useState } from "react"
 
 const ProductsMenu = () => {
-    const [updateDOM, setUpdateDOM] = useState()
-    const { products, loading } = FetchAllProducts(updateDOM)
-    const { presentations } = FetchAllPresentations(updateDOM)
-    const { brands } = FetchAllBrands(updateDOM)
-    const { units } = FetchAllUnits(updateDOM)
+    const { products, loading } = useProducts()
+    const { presentations } = usePresentations()
+    const { brands } = useBrands()
+    const { units } = useUnits()
     const [open, setOpen] = useState(false)
     const [rowProduct, setRowProduct] = useState()
 
@@ -36,7 +33,6 @@ const ProductsMenu = () => {
                 brands={brands}
                 units={units}
                 handleClickOpen={handleOpen}
-                setUpdateDOM={setUpdateDOM}
             />
             <AlertDialog
                 title='Edit product'
@@ -49,7 +45,6 @@ const ProductsMenu = () => {
                     presentations={presentations}
                     brands={brands}
                     units={units}
-                    setUpdateDOM={setUpdateDOM}
                 />
             </AlertDialog>
             {loading && <SimpleBackdrop open={true}/>}

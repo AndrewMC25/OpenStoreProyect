@@ -3,20 +3,21 @@ import { useState } from "react";
 import { useFormik } from "formik";
 import { LoadingButton } from "@mui/lab";
 import * as Yup from "yup"
-import EnhancedTable from "../utils/Table";
+import EnhancedTable from "./Table";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import DeleteIcon from '@mui/icons-material/Delete';
-import OnSubmitProductForm from "../hooks/Handler/HandleSubmitProduct";
 import { useSnackbar } from "notistack";
 import StraightenIcon from '@mui/icons-material/Straighten';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import AlertDialog from "../Layout/AlertDialog";
-import NewBrand from './NewBrand'
-import NewUnit from './NewUnit'
-import NewPresentation from './NewPresentation'
+import handleReset from "../utils/handleReset";
+import handleDataLoad from "../service/frontend/dataLoadServiceHandler";
+import FormBrand from "./FormBrand";
+import FormPresentation from "./FormPresentation";
+import FormUnit from "./FormUnit";
 
-const FormProduct = ({ brands, units, presentations, products, handleClickOpen, setUpdateDOM }) => {
+const FormProduct = ({ brands, units, presentations, products, handleClickOpen }) => {
   const [loading, setLoading] = useState(false)
   const [openBrand, setOpenBrand] = useState(false)
   const [openUnit, setOpenUnit] = useState(false)
@@ -41,10 +42,6 @@ const FormProduct = ({ brands, units, presentations, products, handleClickOpen, 
   const handleClosePresentation = () => {
     setOpenPresentation(false)
   }
-
-  const handleReset = () => {
-    formik.resetForm();
-  };
 
   const formSchema = Yup.object().shape({
     name: Yup
@@ -95,14 +92,28 @@ const FormProduct = ({ brands, units, presentations, products, handleClickOpen, 
     },
     onSubmit: async (values) => {
       setLoading(true)
+      const data = {
+          elements: {
+            name: values.name,
+            description: values.description,
+            price: values.price,
+            picture: values.picture,
+            amount: values.amount,
+            brand_id: values.brand_id,
+            presentation_id: values.presentation_id,
+            unit_id: values.unit_id,
+            barcode: values.barcode
+          },
+          table: 'Product'
+      }
       try {
-        await OnSubmitProductForm(values.name, values.description, values.price, values.picture, values.amount, values.brand_id, values.presentation_id, values.unit_id, values.barcode)
+        await handleDataLoad(data)
         enqueueSnackbar('successfully edit!', { variant: 'success' })
       } catch (error) {
         enqueueSnackbar(error, { variant: 'error' })
       }
       setLoading(false)
-      handleReset()
+      handleReset(formik)
     },
     validationSchema: formSchema
   })
@@ -258,7 +269,6 @@ const FormProduct = ({ brands, units, presentations, products, handleClickOpen, 
                     onBlur={formik.handleBlur}
                     value={formik.values.brand_id}
                     error={formik.errors.brand_id}
-                    helperText={formik.errors.brand_id}
                   >
                     {brands && brands.map(x => (<MenuItem key={x.id} value={x.id}>{x.name}</MenuItem>))}
                   </Select>
@@ -283,7 +293,6 @@ const FormProduct = ({ brands, units, presentations, products, handleClickOpen, 
                     onBlur={formik.handleBlur}
                     value={formik.values.unit_id}
                     error={formik.errors.unit_id}
-                    helperText={formik.errors.unit_id}
                   >
                     {units && units.map(x => (<MenuItem key={x.id} value={x.id}>{x.name}</MenuItem>))}
                   </Select>
@@ -308,7 +317,6 @@ const FormProduct = ({ brands, units, presentations, products, handleClickOpen, 
                     onBlur={formik.handleBlur}
                     value={formik.values.presentation_id}
                     error={formik.errors.presentation_id}
-                    helperText={formik.errors.presentation_id}
                   >
                     {presentations && presentations.map(x => (<MenuItem key={x.id} value={x.id}>{x.name}</MenuItem>))}
                   </Select>
@@ -460,13 +468,13 @@ const FormProduct = ({ brands, units, presentations, products, handleClickOpen, 
         />
       </Box>
       <AlertDialog title='Create New Brand' open={openBrand} handleClose={handleCloseBrand}>
-        <NewBrand setUpdateDOM={setUpdateDOM} handleClose={handleCloseBrand} />
+        <FormBrand isTableVisible={false} />
       </AlertDialog>
       <AlertDialog title='Create New Unit' open={openUnit} handleClose={handleCloseUnit}>
-        <NewUnit setUpdateDOM={setUpdateDOM} handleClose={handleCloseUnit} />
+        <FormUnit isTableVisible={false} />
       </AlertDialog>
       <AlertDialog title='Create New Presentation' open={openPresentation} handleClose={handleClosePresentation}>
-        <NewPresentation setUpdateDOM={setUpdateDOM} handleClose={handleClosePresentation} />
+        <FormPresentation isTableVisible={false} />
       </AlertDialog>
     </Stack>
   );

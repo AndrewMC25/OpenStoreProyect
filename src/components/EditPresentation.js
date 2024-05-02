@@ -1,43 +1,60 @@
-import { Stack, TextField } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import { useState } from "react";
 import { useFormik } from "formik";
 import { LoadingButton } from "@mui/lab";
 import * as Yup from "yup"
-import OnSubmitBrandForm from "../hooks/Handler/HandleSubmitBrand";
 import { useSnackbar } from "notistack";
+import handleDataUpdate from "../service/frontend/dataUpdateServiceHandler";
 
-const NewBrand = ({ handleClose, setUpdateDOM }) => {
+const FormEditPresentation = ({ rowPresentation, handleClose }) => {
     const [loading, setLoading] = useState(false)
     const { enqueueSnackbar } = useSnackbar()
+
     const formSchema = Yup.object().shape({
-        name: Yup.string()
+        name: Yup
+            .string()
             .required('Este campo es obligatorio')
             .min(3, 'Minimo 3 caracteres')
-            .max(25, 'Maximo 25 caracteres')
+            .max(25, 'Maximo 25 caracteres'),
+        description: Yup
+            .string()
+            .required('Este campo es obligatorio')
+            .min(5, 'Minimo 5 caracteres')
     })
 
     const formik = useFormik({
         initialValues: {
-            name: ''
+            name: rowPresentation.name,
+            description: rowPresentation.description
         },
         onSubmit: async (values) => {
+            const data = {
+                elements: {
+                    name: values.name,
+                    description: values.description
+                },
+                table: 'ProductPresentation',
+                row: rowPresentation,
+                id: 'id'
+            }
             setLoading(true)
             try {
-                await OnSubmitBrandForm(values.name)
+                await handleDataUpdate(data)
                 enqueueSnackbar('successfully edit!', { variant: 'success' })
             } catch (error) {
                 enqueueSnackbar(error, { variant: 'error' })
             }
             setLoading(false)
             handleClose()
-            setUpdateDOM(1)
         },
         validationSchema: formSchema
     })
 
     return (
-        <Stack
+        <Box
             sx={{
+                display: 'flex',
+                flexDirection: 'column',
                 width: '500px',
                 border: '1px solid #d3d3d3',
                 padding: 5,
@@ -67,6 +84,20 @@ const NewBrand = ({ handleClose, setUpdateDOM }) => {
                     helperText={formik.errors.name}
                 />
                 <br />
+                <TextField
+                    label="Description"
+                    variant="outlined"
+                    name="description"
+                    sx={{
+                        width: '80%'
+                    }}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.description}
+                    error={formik.errors.description}
+                    helperText={formik.errors.description}
+                />
+                <br />
                 <LoadingButton
                     loading={loading}
                     variant="contained"
@@ -75,11 +106,11 @@ const NewBrand = ({ handleClose, setUpdateDOM }) => {
                         width: '80%'
                     }}
                 >
-                    Create
+                    Edit
                 </LoadingButton>
             </form>
-        </Stack>
-    )
+        </Box>
+    );
 }
 
-export default NewBrand
+export default FormEditPresentation

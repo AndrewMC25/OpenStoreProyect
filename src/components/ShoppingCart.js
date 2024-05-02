@@ -1,8 +1,8 @@
 import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import AlertDialog from "./AlertDialog";
-import TotalToPay from '../utils/TotalToPay';
-import EditCartProducts from '../components/EditCartProducts'
+import AlertDialog from "../Layout/AlertDialog";
+import TotalToPay from './TotalToPay';
+import EditCartProducts from './EditCartProducts'
 import DeleteIcon from '@mui/icons-material/Delete';
 import SendIcon from '@mui/icons-material/Send';
 
@@ -26,17 +26,15 @@ const styles = {
   },
 };
 
-const ShoppingCart = ({ cart, subtotal, setCart, updateDOM, setUpdateDOM, handleSubtotal }) => {
+const ShoppingCart = ({ cart, subtotal, setCart, handleSubtotal }) => {
   const [productCartOptions, setProductCartOptions] = useState(false)
   const [productCartId, setProductCartId] = useState()
-  const [cartProductAmount, setCartProductAmount] = useState()
   const [newAmount, setNewAmount] = useState()
-  const [bill, setBill] = useState()
+  const [bill, setBill] = useState(false)
 
-  const handleOpenProductOptions = (id, amount) => {
+  const handleOpenProductOptions = (id) => {
     setProductCartOptions(true)
     setProductCartId(id)
-    setCartProductAmount(amount)
   }
   const handleCloseProductOptions = () => {
     setProductCartOptions(false)
@@ -67,7 +65,7 @@ const ShoppingCart = ({ cart, subtotal, setCart, updateDOM, setUpdateDOM, handle
     setCart(newCart)
     setProductCartId(null)
     handleSubtotal(newCart)
-  }, [newAmount, cart, updateDOM])
+  }, [newAmount, cart])
 
   const opciones = { useGrouping: true, minimumFractionDigits: 0, maximumFractionDigits: 0 };
 
@@ -143,20 +141,20 @@ const ShoppingCart = ({ cart, subtotal, setCart, updateDOM, setUpdateDOM, handle
                     </Typography>
                   </div>
                   <div
-                  style={{
-                    listStyle: 'none',
-                    gridArea: 'tail'
-                  }}
-                  >
-                  <span
                     style={{
-                      fontSize: '12px',
-                      lineHeight: '16px',
-                      boxSizing: 'border-box'
+                      listStyle: 'none',
+                      gridArea: 'tail'
                     }}
                   >
-                    cantidad: {x.amount.toLocaleString('es', opciones)}
-                  </span>
+                    <span
+                      style={{
+                        fontSize: '12px',
+                        lineHeight: '16px',
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      cantidad: {x.amount.toLocaleString('es', opciones)}
+                    </span>
                   </div>
                 </li>
               </ul>
@@ -223,7 +221,7 @@ const ShoppingCart = ({ cart, subtotal, setCart, updateDOM, setUpdateDOM, handle
           open={productCartOptions}
           handleClose={handleCloseProductOptions}
         >
-          <EditCartProducts updateDOM={updateDOM} setUpdateDOM={setUpdateDOM} amount={cartProductAmount} id={productCartId} handleClose={handleCloseProductOptions} setNewAmount={setNewAmount} />
+          <EditCartProducts handleClose={handleCloseProductOptions} setNewAmount={setNewAmount} />
         </AlertDialog>
         <AlertDialog
           open={bill}

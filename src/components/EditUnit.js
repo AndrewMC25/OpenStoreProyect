@@ -1,12 +1,12 @@
-import { Box, TextField } from "@mui/material";
-import { useState } from "react";
-import { useFormik } from "formik";
-import { LoadingButton } from "@mui/lab";
+import { LoadingButton } from "@mui/lab"
+import { Box, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material"
+import { useFormik } from "formik"
+import { useState } from "react"
 import * as Yup from "yup"
-import OnSubmitEditPresentationForm from "../hooks/Handler/HandleSubmitEditPresentation";
-import { useSnackbar } from "notistack";
+import { useSnackbar } from "notistack"
+import handleDataUpdate from "../service/frontend/dataUpdateServiceHandler"
 
-const FormEditPresentation = ({ rowPresentation, handleClose }) => {
+const FormEditUnit = ({ rowUnit, handleClose }) => {
     const [loading, setLoading] = useState(false)
     const { enqueueSnackbar } = useSnackbar()
 
@@ -16,21 +16,38 @@ const FormEditPresentation = ({ rowPresentation, handleClose }) => {
             .required('Este campo es obligatorio')
             .min(3, 'Minimo 3 caracteres')
             .max(25, 'Maximo 25 caracteres'),
-        description: Yup
+        type: Yup
+            .string()
+            .required('Este campo es obligatorio'),
+        abbreviation: Yup
             .string()
             .required('Este campo es obligatorio')
-            .min(5, 'Minimo 5 caracteres')
     })
+
+    const length = 'length'
+    const mass = 'mass'
+    const volume = 'volume'
 
     const formik = useFormik({
         initialValues: {
-            name: rowPresentation.name,
-            description: rowPresentation.description
+            type: rowUnit.type,
+            name: rowUnit.name,
+            abbreviation: rowUnit.abbreviation
         },
         onSubmit: async (values) => {
             setLoading(true)
+            const data = {
+                elements: {
+                    name: values.name,
+                    type: values.type,
+                    abbreviation: values.abbreviation
+                },
+                table: 'UnitType',
+                row: rowUnit.id,
+                id: 'id'
+            }
             try {
-                await OnSubmitEditPresentationForm(values.name, values.description, rowPresentation)
+                await handleDataUpdate(data)
                 enqueueSnackbar('successfully edit!', { variant: 'success' })
             } catch (error) {
                 enqueueSnackbar(error, { variant: 'error' })
@@ -61,6 +78,30 @@ const FormEditPresentation = ({ rowPresentation, handleClose }) => {
                     alignItems: 'center'
                 }}
             >
+                <FormControl
+                    sx={{
+                        width: '80%'
+                    }}>
+                    <InputLabel id="typeLabel">Type</InputLabel>
+                    <Select
+                        labelId="typeLabel"
+                        name='type'
+                        label="Type"
+                        sx={{
+                            width: '100%'
+                        }}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.type}
+                        error={formik.errors.type}
+                        helperText={formik.errors.type}
+                    >
+                        <MenuItem value={length}>{length}</MenuItem>
+                        <MenuItem value={mass}>{mass}</MenuItem>
+                        <MenuItem value={volume}>{volume}</MenuItem>
+                    </Select>
+                </FormControl>
+                <br />
                 <TextField
                     label="Name"
                     variant="outlined"
@@ -76,17 +117,17 @@ const FormEditPresentation = ({ rowPresentation, handleClose }) => {
                 />
                 <br />
                 <TextField
-                    label="Description"
+                    label="Abbreviation"
                     variant="outlined"
-                    name="description"
+                    name="abbreviation"
                     sx={{
                         width: '80%'
                     }}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    value={formik.values.description}
-                    error={formik.errors.description}
-                    helperText={formik.errors.description}
+                    value={formik.values.abbreviation}
+                    error={formik.errors.abbreviation}
+                    helperText={formik.errors.abbreviation}
                 />
                 <br />
                 <LoadingButton
@@ -104,4 +145,4 @@ const FormEditPresentation = ({ rowPresentation, handleClose }) => {
     );
 }
 
-export default FormEditPresentation
+export default FormEditUnit

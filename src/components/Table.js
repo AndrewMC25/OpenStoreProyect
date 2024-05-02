@@ -4,8 +4,8 @@ import { alpha } from '@mui/material/styles';
 import { visuallyHidden } from '@mui/utils';
 import { Box, Checkbox, TableCell, TableRow, TableHead, TableSortLabel, Toolbar, Typography, IconButton, Tooltip, Table, TableBody, TableContainer, Paper } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import supabase from '../config/supabaseClient'
 import { useSnackbar } from 'notistack';
+import handleDataUpdate from '../service/frontend/dataUpdateServiceHandler';
 
 export default function EnhancedTable({ rows, headCells, title, handleClickOpen, tableTitle, visible, brands, units, presentations, icon, iconTitle }) {
     const [order, setOrder] = useState('asc');
@@ -61,16 +61,19 @@ export default function EnhancedTable({ rows, headCells, title, handleClickOpen,
     const handleHideSelected = () => {
         selected.map(
             async row => {
-                const { status, error } = await supabase
-                    .from(tableTitle)
-                    .update([{ visible: visible }])
-                    .eq('id', row)
-
-                if (error) {
-                    enqueueSnackbar(error.message, { variant: 'error' })
+                const data = {
+                    elements: {
+                        visible: visible
+                    },
+                    table: tableTitle,
+                    row: row,
+                    id: 'id'
                 }
-                if (status === 204) {
+                try {
+                    await handleDataUpdate(data)
                     enqueueSnackbar('successfully edit!', { variant: 'success' })
+                } catch (error) {
+                    console.error(error)
                 }
             }
         )

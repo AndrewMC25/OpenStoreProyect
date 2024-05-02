@@ -6,13 +6,12 @@ import { useSnackbar } from "notistack";
 import * as Yup from "yup"
 import { Stack, TextField, Typography } from "@mui/material"
 import { LoadingButton } from "@mui/lab";
-import SalesFunction from '../hooks/Fetchers/SalesFunction'
 import { DebounceInput } from "react-debounce-input";
-import FetchAllProducts from '../hooks/Fetchers/FetchAllProducts'
 import ProductCard from '../Layout/ProductCard'
-import ShoppingCart from "../Layout/ShoppingCart";
+import ShoppingCart from "./ShoppingCart";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import Link from "next/link";
+import { useProducts } from "../hooks/useProducts";
+import handleReset from '../utils/handleReset'
 
 const SalesPanel = () => {
 
@@ -20,15 +19,9 @@ const SalesPanel = () => {
     const [selectedProduct, setSelectedProduct] = useState([])
     const [cartProducts, setCartProducts] = useState([])
     const [subtotal, setSubtotal] = useState([])
-    const [updateDOM, setUpdateDOM] = useState()
     const { enqueueSnackbar } = useSnackbar()
-
-    const { products } = FetchAllProducts(updateDOM)
+    const { getProduct } = useProducts()
     const amountRef = useRef(null)
-
-    const handleReset = () => {
-        formik.resetForm();
-    };
 
     const handleSubtotal = (newCart) => {
         const initialValue = 0
@@ -40,13 +33,13 @@ const SalesPanel = () => {
         setSubtotal(subtotalSum)
     }
 
-    const handleCarroProducts = (cartProduct, amount) => {
+    const handleAddToCart = (cartProduct, amount) => {
         const cart = cartProducts.find((item) => item.barcode == cartProduct[0].barcode)
         let newCart
 
         if(cart) {
             newCart = cartProducts.map((x) =>
-                x.barcode == cartProduct[0].barcode ? { ...x, amount: x.amount + initialValue } : x
+                x.barcode == cartProduct[0].barcode ? { ...x, amount: x.amount + amount } : x
             )
         } else {
             newCart = cartProducts.concat({
@@ -59,13 +52,13 @@ const SalesPanel = () => {
         setSelectedProduct([])
     }
 
-    const inputOnChange = (name, value) => {
+    const inputOnChange = async (name, value) => {
 
         const numericValue = parseInt(value, 10)
-        const foundProduct = products.find((item) => item.barcode === numericValue)
+        const foundProduct = await getProduct(numericValue)
 
         if(foundProduct !== undefined) {
-            setSelectedProduct([foundProduct])
+            setSelectedProduct(foundProduct)
             amountRef.current.focus()
         } else {
             enqueueSnackbar("Couldn't be found any product", { variant: 'error' })
@@ -90,15 +83,13 @@ const SalesPanel = () => {
         onSubmit: async (values) => {
             setLoading(true)
             try {
-                await SalesFunction(values.barcode, values.amount, selectedProduct)
+                handleAddToCart(selectedProduct, values.amount)
                 enqueueSnackbar('successfully edit!', { variant: 'success' })
-                handleCarroProducts(selectedProduct, values.amount)
-                setUpdateDOM(11)
             } catch (error) {
                 enqueueSnackbar(error, { variant: 'error' })
             }
             setLoading(false)
-            handleReset()
+            handleReset(formik)
             const barcodeRef = document.getElementById("barcode-field")
             barcodeRef.focus()
         },
@@ -162,8 +153,8 @@ const SalesPanel = () => {
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.amount}
-                            error={formik.errors.amount}
-                            helperText={formik.errors.amount}
+                            error={formik.touched.amount && Boolean(formik.errors.amount)}
+                            helperText={formik.touched.amount && formik.errors.amount}
                         />
                         <br/>
                         <LoadingButton
@@ -215,8 +206,6 @@ const SalesPanel = () => {
                 ?
                     <ShoppingCart
                         handleSubtotal={handleSubtotal}
-                        updateDOM={updateDOM}
-                        setUpdateDOM={setUpdateDOM}
                         subtotal={subtotal}
                         cart={cartProducts}
                         setCart={setCartProducts}
@@ -233,11 +222,6 @@ const SalesPanel = () => {
                     </Stack>
                 }
             </Stack>
-            <Link href='/SignUp'>
-                <Typography>
-                    Sign up
-                </Typography>
-            </Link>
         </Stack>
     )
 }

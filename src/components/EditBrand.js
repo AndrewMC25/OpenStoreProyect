@@ -3,10 +3,10 @@ import { useState } from "react";
 import { useFormik } from "formik";
 import { LoadingButton } from "@mui/lab";
 import * as Yup from "yup"
-import OnSubmitEditBrandForm from "../hooks/Handler/HandleSubmitEditBrand";
+import handleDataUpdate from '../service/frontend/dataUpdateServiceHandler'
 import { useSnackbar } from "notistack";
 
-const FormEditBrand = ({ rowBrand, handleClose, updateDOM }) => {
+const FormEditBrand = ({ rowBrand, handleClose }) => {
     const [loading, setLoading] = useState(false)
     const { enqueueSnackbar } = useSnackbar()
 
@@ -23,15 +23,22 @@ const FormEditBrand = ({ rowBrand, handleClose, updateDOM }) => {
         },
         onSubmit: async (values) => {
             setLoading(true)
+            const data = {
+                elements: {
+                    name: values.name
+                },
+                table: 'Brand',
+                row: rowBrand.id,
+                id: 'id'
+            }
             try {
-                await OnSubmitEditBrandForm(values.name, rowBrand)
+                await handleDataUpdate(data)
                 enqueueSnackbar('successfully edit!', { variant: 'success' })
             } catch (error) {
                 enqueueSnackbar(error, { variant: 'error' })
             }
             setLoading(false)
             handleClose()
-            updateDOM(1)
         },
         validationSchema: formSchema
     })

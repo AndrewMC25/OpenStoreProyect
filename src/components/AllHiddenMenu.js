@@ -1,17 +1,15 @@
 import { Box, Typography } from "@mui/material"
-import EnhancedTable from "../utils/Table"
-import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
-import FetchHiddenBrands from "../hooks/Fetchers/FetchHiddenBrands"
-import FetchHiddenProducts from "../hooks/Fetchers/FetchHiddenProducts"
-import FetchHiddenUnits from "../hooks/Fetchers/FetchHiddenUnits"
-import FetchHiddenPresentations from "../hooks/Fetchers/FetchHiddenPresentations"
+import EnhancedTable from "../components/Table"
+import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash'
+import { useHiddenBrands, useHiddenPresentations, useHiddenProducts, useHiddenUnits } from "@/src/hooks/FetchItems"
+import { useState } from "react"
 
 const AllHiddenMenu = ({ brands, units, presentation }) => {
 
-    const hiddenBrands = FetchHiddenBrands()
-    const hiddenProducts = FetchHiddenProducts()
-    const hiddenUnits = FetchHiddenUnits()
-    const hiddenPresentation = FetchHiddenPresentations()
+    const hiddenBrands = useHiddenBrands()
+    const hiddenProducts = useHiddenProducts()
+    const hiddenUnits = useHiddenUnits()
+    const hiddenPresentation = useHiddenPresentations()
 
     return (
         <Box

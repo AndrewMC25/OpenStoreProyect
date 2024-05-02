@@ -3,10 +3,10 @@ import { useState } from "react";
 import { useFormik } from "formik";
 import { LoadingButton } from "@mui/lab";
 import * as Yup from "yup"
-import OnSubmitEditProductForm from "../hooks/Handler/HandleSubmitEditProduct";
 import { useSnackbar } from "notistack";
+import handleDataUpdate from "../service/frontend/dataUpdateServiceHandler";
 
-const FormEditProduct = ({ brands, units, presentations, rowProduct, handleClose, setUpdateDOM }) => {
+const FormEditProduct = ({ brands, units, presentations, rowProduct, handleClose }) => {
     const [loading, setLoading] = useState(false)
     const { enqueueSnackbar } = useSnackbar()
 
@@ -59,15 +59,30 @@ const FormEditProduct = ({ brands, units, presentations, rowProduct, handleClose
         },
         onSubmit: async (values) => {
             setLoading(true)
+            const data = {
+                elements: {
+                  name: values.name,
+                  description: values.description,
+                  price: values.price,
+                  picture: values.picture,
+                  amount: values.amount,
+                  brand_id: values.brand_id,
+                  presentation_id: values.presentation_id,
+                  unit_id: values.unit_id,
+                  barcode: values.barcode
+                },
+                table: 'Product',
+                row: rowProduct.id,
+                id: 'id'
+            }
             try {
-                await OnSubmitEditProductForm(values.name, values.description, values.price, values.picture, values.amount, values.brand_id, values.presentation_id, values.unit_id, values.barcode, rowProduct)
+                await handleDataUpdate(data)
                 enqueueSnackbar('successfully edit!', { variant: 'success' })
             } catch (error) {
                 enqueueSnackbar(error, { variant: 'error' })
             }
             setLoading(false)
             handleClose()
-            setUpdateDOM(4)
         },
         validationSchema: formSchema
     })

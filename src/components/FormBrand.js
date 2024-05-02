@@ -3,19 +3,16 @@ import { useState } from "react";
 import { useFormik } from "formik";
 import { LoadingButton } from "@mui/lab";
 import * as Yup from "yup"
-import EnhancedTable from "../utils/Table";
+import EnhancedTable from "./Table";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import DeleteIcon from '@mui/icons-material/Delete';
-import OnSubmitBrandForm from "../hooks/Handler/HandleSubmitBrand";
+import handleReset from '../utils/handleReset'
+import handleDataLoad from '../service/frontend/dataLoadServiceHandler'
 import { useSnackbar } from "notistack";
 
-const FormBrand = ({ brands, handleClickOpen }) => {
+const FormBrand = ({ brands, handleClickOpen, isTableVisible }) => {
     const [loading, setLoading] = useState(false)
     const { enqueueSnackbar } = useSnackbar()
-
-    const handleReset = () => {
-        formik.resetForm();
-    };
 
     const formSchema = Yup.object().shape({
         name: Yup.string()
@@ -30,14 +27,20 @@ const FormBrand = ({ brands, handleClickOpen }) => {
         },
         onSubmit: async (values) => {
             setLoading(true)
+            const data = {
+                elements: {
+                    name: values.name
+                },
+                table: 'Brand'
+            }
             try {
-                await OnSubmitBrandForm(values.name)
+                await handleDataLoad(data)
                 enqueueSnackbar('successfully edit!', { variant: 'success' })
             } catch (error) {
                 enqueueSnackbar(error, { variant: 'error' })
             }
             setLoading(false)
-            handleReset()
+            handleReset(formik)
         },
         validationSchema: formSchema
     })
@@ -93,7 +96,9 @@ const FormBrand = ({ brands, handleClickOpen }) => {
                     </LoadingButton>
                 </form>
             </Stack>
-            <EnhancedTable
+            {
+                isTableVisible &&
+                    <EnhancedTable
                 title='Brands'
                 handleClickOpen={handleClickOpen}
                 tableTitle='Brand'
@@ -122,6 +127,7 @@ const FormBrand = ({ brands, handleClickOpen }) => {
                 icon={<DeleteIcon />}
                 iconTitle='Delete'
             />
+            }
         </Stack>
 
     );
