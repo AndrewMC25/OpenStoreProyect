@@ -3,19 +3,16 @@ import { useState } from "react";
 import { useFormik } from "formik";
 import { LoadingButton } from "@mui/lab";
 import * as Yup from "yup"
-import EnhancedTable from "../utils/Table";
+import EnhancedTable from "./Table";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import DeleteIcon from '@mui/icons-material/Delete';
-import OnSubmitPresentationForm from "../hooks/Handler/HandleSubmitPresentation";
 import { useSnackbar } from "notistack";
+import handleDataLoad from "../service/frontend/dataLoadServiceHandler";
+import handleReset from "../utils/handleReset";
 
-const FormPresentation = ({ presentations, handleClickOpen }) => {
+const FormPresentation = ({ presentations, handleClickOpen, isTableVisible }) => {
     const [loading, setLoading] = useState(false)
     const { enqueueSnackbar } = useSnackbar()
-
-    const handleReset = () => {
-        formik.resetForm();
-    };
 
     const formSchema = Yup.object().shape({
         name: Yup
@@ -36,14 +33,21 @@ const FormPresentation = ({ presentations, handleClickOpen }) => {
         },
         onSubmit: async (values) => {
             setLoading(true)
+            const data = {
+                elements: {
+                    name: values.name,
+                    description: values.description
+                },
+                table: 'ProductPresentation'
+            }
             try {
-                await OnSubmitPresentationForm(values.name, values.description)
+                await handleDataLoad(data)
                 enqueueSnackbar('successfully edit!', { variant: 'success' })
             } catch (error) {
                 enqueueSnackbar(error, { variant: 'error' })
             }
             setLoading(false)
-            handleReset()
+            handleReset(formik)
         },
         validationSchema: formSchema
     })
@@ -117,41 +121,44 @@ const FormPresentation = ({ presentations, handleClickOpen }) => {
                     </LoadingButton>
                 </form>
             </Box>
-            <EnhancedTable
-                title='Product presentation'
-                handleClickOpen={handleClickOpen}
-                tableTitle='ProductPresentation'
-                visible={false}
-                headCells={[
-                    {
-                        id: 'name',
-                        numeric: false,
-                        disablePadding: true,
-                        label: 'Name',
-                    },
-                    {
-                        id: 'description',
-                        numeric: true,
-                        disablePadding: false,
-                        label: 'Description',
-                    },
-                    {
-                        id: 'createdAt',
-                        numeric: true,
-                        disablePadding: false,
-                        label: 'Created At',
-                    },
-                    {
-                        id: 'option',
-                        numeric: true,
-                        disablePadding: false,
-                        label: <ArrowDropDownIcon />,
-                    }
-                ]}
-                rows={presentations}
-                icon={<DeleteIcon />}
-                iconTitle='Delete'
-            />
+            {
+                isTableVisible &&
+                    <EnhancedTable
+                        title='Product presentation'
+                        handleClickOpen={handleClickOpen}
+                        tableTitle='ProductPresentation'
+                        visible={false}
+                        headCells={[
+                            {
+                                id: 'name',
+                                numeric: false,
+                                disablePadding: true,
+                                label: 'Name',
+                            },
+                            {
+                                id: 'description',
+                                numeric: true,
+                                disablePadding: false,
+                                label: 'Description',
+                            },
+                            {
+                                id: 'createdAt',
+                                numeric: true,
+                                disablePadding: false,
+                                label: 'Created At',
+                            },
+                            {
+                                id: 'option',
+                                numeric: true,
+                                disablePadding: false,
+                                label: <ArrowDropDownIcon />,
+                            }
+                        ]}
+                        rows={presentations}
+                        icon={<DeleteIcon />}
+                        iconTitle='Delete'
+                    />
+            }
         </Box>
     );
 }

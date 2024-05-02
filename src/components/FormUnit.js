@@ -3,19 +3,16 @@ import { useState } from "react";
 import { useFormik } from "formik";
 import { LoadingButton } from "@mui/lab";
 import * as Yup from "yup"
-import EnhancedTable from "../utils/Table";
+import EnhancedTable from "./Table";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import DeleteIcon from '@mui/icons-material/Delete';
-import OnSubmitUnitForm from "../hooks/Handler/HandleSubmitUnit";
 import { useSnackbar } from "notistack";
+import handleReset from "../utils/handleReset";
+import handleDataLoad from "../service/frontend/dataLoadServiceHandler";
 
-const FormUnit = ({ units, handleClickOpen }) => {
+const FormUnit = ({ units, handleClickOpen, isTableVisible }) => {
     const [loading, setLoading] = useState(false)
     const { enqueueSnackbar } = useSnackbar()
-
-    const handleReset = () => {
-        formik.resetForm();
-    };
 
     const formSchema = Yup.object().shape({
         name: Yup
@@ -43,14 +40,22 @@ const FormUnit = ({ units, handleClickOpen }) => {
         },
         onSubmit: async (values) => {
             setLoading(true)
+            const data = {
+                elements: {
+                    name: values.name,
+                    type: values.type,
+                    abbreviation: values.abbreviation
+                },
+                table: 'UnitType'
+            }
             try {
-                await OnSubmitUnitForm(values.name, values.type, values.abbreviation)
+                await handleDataLoad(data)
                 enqueueSnackbar('successfully edit!', { variant: 'success' })
             } catch (error) {
                 enqueueSnackbar(error, { variant: 'error' })
             }
             setLoading(false)
-            handleReset()
+            handleReset(formik)
         },
         validationSchema: formSchema
     })
@@ -100,7 +105,6 @@ const FormUnit = ({ units, handleClickOpen }) => {
                             onBlur={formik.handleBlur}
                             value={formik.values.type}
                             error={formik.errors.type}
-                            helperText={formik.errors.type}
                         >
                             <MenuItem value={length}>{length}</MenuItem>
                             <MenuItem value={mass}>{mass}</MenuItem>
@@ -148,47 +152,50 @@ const FormUnit = ({ units, handleClickOpen }) => {
                     </LoadingButton>
                 </form>
             </Box>
-            <EnhancedTable
-                title='Units of measurement'
-                handleClickOpen={handleClickOpen}
-                tableTitle='UnitType'
-                visible={false}
-                headCells={[
-                    {
-                        id: 'name',
-                        numeric: false,
-                        disablePadding: true,
-                        label: 'Name',
-                    },
-                    {
-                        id: 'type',
-                        numeric: true,
-                        disablePadding: false,
-                        label: 'Type',
-                    },
-                    {
-                        id: 'abbreviation',
-                        numeric: true,
-                        disablePadding: false,
-                        label: 'Abbreviation',
-                    },
-                    {
-                        id: 'createdAt',
-                        numeric: true,
-                        disablePadding: false,
-                        label: 'Created At',
-                    },
-                    {
-                        id: 'option',
-                        numeric: true,
-                        disablePadding: false,
-                        label: <ArrowDropDownIcon />,
-                    }
-                ]}
-                rows={units}
-                icon={<DeleteIcon />}
-                iconTitle='Delete'
-            />
+            {
+                isTableVisible &&
+                    <EnhancedTable
+                        title='Units of measurement'
+                        handleClickOpen={handleClickOpen}
+                        tableTitle='UnitType'
+                        visible={false}
+                        headCells={[
+                            {
+                                id: 'name',
+                                numeric: false,
+                                disablePadding: true,
+                                label: 'Name',
+                            },
+                            {
+                                id: 'type',
+                                numeric: true,
+                                disablePadding: false,
+                                label: 'Type',
+                            },
+                            {
+                                id: 'abbreviation',
+                                numeric: true,
+                                disablePadding: false,
+                                label: 'Abbreviation',
+                            },
+                            {
+                                id: 'createdAt',
+                                numeric: true,
+                                disablePadding: false,
+                                label: 'Created At',
+                            },
+                            {
+                                id: 'option',
+                                numeric: true,
+                                disablePadding: false,
+                                label: <ArrowDropDownIcon />,
+                            }
+                        ]}
+                        rows={units}
+                        icon={<DeleteIcon />}
+                        iconTitle='Delete'
+                    />
+            }
         </Box>
     );
 }

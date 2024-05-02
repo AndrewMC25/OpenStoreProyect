@@ -1,7 +1,4 @@
-//recibir parametro
-// llamar un servicio
-// responder un response
-import verify from '../../../src/service/TokenVerifierService'
+import verify from '../../../src/service/backend/tokenVerifierService'
 
 export async function POST(req) {
     const body = await req.json();
