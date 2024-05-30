@@ -1,16 +1,15 @@
 'use client'
 
 import { Box } from "@mui/material"
-import FormProduct from "../../src/components/FormProduct"
+import FormProduct from "../../../src/components/FormProduct"
 import { usePresentations, useBrands, useUnits } from "@/src/hooks/FetchItems"
 import { useProducts } from "@/src/hooks/useProducts"
-import SimpleBackdrop from '../../src/Layout/Backdrop'
-import FormEditProduct from '../../src/components/EditProduct'
-import AlertDialog from '../../src/Layout/AlertDialog'
+import FormEditProduct from '../../../src/components/EditProduct'
+import AlertDialog from '../../../src/Layout/AlertDialog'
 import { useState } from "react"
 
 const ProductsMenu = () => {
-    const { products, loading } = useProducts()
+    const { products } = useProducts()
     const { presentations } = usePresentations()
     const { brands } = useBrands()
     const { units } = useUnits()
@@ -47,7 +46,6 @@ const ProductsMenu = () => {
                     units={units}
                 />
             </AlertDialog>
-            {loading && <SimpleBackdrop open={true}/>}
         </Box>
     )
 }

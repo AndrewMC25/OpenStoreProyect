@@ -1,8 +1,12 @@
 import * as db from '../../lib/database';
 
 const dataDepot = async (data) => {
-    const response = await db.createItem(data.elements, data.table);
-    return response;
+    try {
+        const response = await db.createItem(data.elements, data.table);
+        return response;
+    } catch (error) {
+        console.error(error)
+    }
 }
 
 export default dataDepot;

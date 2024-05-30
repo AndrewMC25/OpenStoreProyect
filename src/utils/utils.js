@@ -17,7 +17,7 @@ export const parseJwt = (token) => {
             decodedToken: JSON.parse(payload),
         };
     } catch (err) {
-        console.log(`Bonus logging: ${err}`);
+        console.error(`Bonus logging: ${err}`);
 
         return {
             error: 'Unable to decode token.',

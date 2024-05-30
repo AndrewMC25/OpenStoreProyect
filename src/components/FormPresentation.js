@@ -9,10 +9,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useSnackbar } from "notistack";
 import handleDataLoad from "../service/frontend/dataLoadServiceHandler";
 import handleReset from "../utils/handleReset";
+import { useUserContext } from "../context/userContext";
+import { usePresentations } from "../hooks/FetchItems";
 
-const FormPresentation = ({ presentations, handleClickOpen, isTableVisible }) => {
+const FormPresentation = ({ presentations, handleClickOpen, isTableVisible, handleClose }) => {
     const [loading, setLoading] = useState(false)
     const { enqueueSnackbar } = useSnackbar()
+    const user = useUserContext();
+    const { handleUpdatePresentations } = usePresentations();
 
     const formSchema = Yup.object().shape({
         name: Yup
@@ -36,13 +40,18 @@ const FormPresentation = ({ presentations, handleClickOpen, isTableVisible }) =>
             const data = {
                 elements: {
                     name: values.name,
-                    description: values.description
+                    description: values.description,
+                    user_id: user.id
                 },
                 table: 'ProductPresentation'
             }
             try {
-                await handleDataLoad(data)
-                enqueueSnackbar('successfully edit!', { variant: 'success' })
+                await handleDataLoad(data);
+                enqueueSnackbar('successfully edit!', { variant: 'success' });
+                handleUpdatePresentations();
+                if(isTableVisible === false ){
+                    handleClose()
+                };
             } catch (error) {
                 enqueueSnackbar(error, { variant: 'error' })
             }

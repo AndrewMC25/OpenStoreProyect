@@ -227,7 +227,7 @@ const ShoppingCart = ({ cart, subtotal, setCart, handleSubtotal }) => {
           open={bill}
           handleClose={handleCloseBill}
         >
-          <TotalToPay cart={cart} subtotal={subtotal} handleClose={handleCloseBill} />
+          <TotalToPay cart={cart} setCart={setCart} subtotal={subtotal} handleClose={setBill} />
         </AlertDialog>
     </Stack>
   );

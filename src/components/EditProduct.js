@@ -5,8 +5,10 @@ import { LoadingButton } from "@mui/lab";
 import * as Yup from "yup"
 import { useSnackbar } from "notistack";
 import handleDataUpdate from "../service/frontend/dataUpdateServiceHandler";
+import { useUserContext } from "../context/userContext";
 
 const FormEditProduct = ({ brands, units, presentations, rowProduct, handleClose }) => {
+    const user = useUserContext();
     const [loading, setLoading] = useState(false)
     const { enqueueSnackbar } = useSnackbar()
 
@@ -73,19 +75,20 @@ const FormEditProduct = ({ brands, units, presentations, rowProduct, handleClose
                 },
                 table: 'Product',
                 row: rowProduct.id,
-                id: 'id'
+                id: 'id',
+                userId: user.id
             }
             try {
-                await handleDataUpdate(data)
-                enqueueSnackbar('successfully edit!', { variant: 'success' })
+                await handleDataUpdate(data);
+                enqueueSnackbar('successfully edit!', { variant: 'success' });
             } catch (error) {
-                enqueueSnackbar(error, { variant: 'error' })
-            }
-            setLoading(false)
-            handleClose()
+                enqueueSnackbar(error, { variant: 'error' });
+            };
+            setLoading(false);
+            handleClose();
         },
         validationSchema: formSchema
-    })
+    });
 
     return (
         <Box

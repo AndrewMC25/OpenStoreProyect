@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
 import { visuallyHidden } from '@mui/utils';
 import { Box, Checkbox, TableCell, TableRow, TableHead, TableSortLabel, Toolbar, Typography, IconButton, Tooltip, Table, TableBody, TableContainer, Paper } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { useSnackbar } from 'notistack';
-import handleDataUpdate from '../service/frontend/dataUpdateServiceHandler';
+import handleDataDelete from '../service/frontend/dataDeleteServiceHandler';
+import { useUserContext } from '../context/userContext';
 
-export default function EnhancedTable({ rows, headCells, title, handleClickOpen, tableTitle, visible, brands, units, presentations, icon, iconTitle }) {
+export default function EnhancedTable({ rows, headCells, title, handleClickOpen, tableTitle, brands, units, presentations, icon, iconTitle }) {
+    const user = useUserContext();
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('');
     const [selected, setSelected] = useState([]);
@@ -58,19 +60,16 @@ export default function EnhancedTable({ rows, headCells, title, handleClickOpen,
 
     const isSelected = (id) => selected.indexOf(id) !== -1;
 
-    const handleHideSelected = () => {
+    const handleDeleteSelected = () => {
         selected.map(
             async row => {
                 const data = {
-                    elements: {
-                        visible: visible
-                    },
                     table: tableTitle,
                     row: row,
-                    id: 'id'
+                    userId: user.id
                 }
                 try {
-                    await handleDataUpdate(data)
+                    await handleDataDelete(data)
                     enqueueSnackbar('successfully edit!', { variant: 'success' })
                 } catch (error) {
                     console.error(error)
@@ -179,7 +178,7 @@ export default function EnhancedTable({ rows, headCells, title, handleClickOpen,
                             <IconButton
                                 onClick={
                                     () => {
-                                        handleHideSelected()
+                                        handleDeleteSelected()
                                         setSelected([])
                                     }
                                 }
@@ -197,10 +196,10 @@ export default function EnhancedTable({ rows, headCells, title, handleClickOpen,
     EnhancedTableToolbar.propTypes = {
         numSelected: PropTypes.number.isRequired,
     }
-
+    
     return (
         <Box>
-            {allRows ?
+            {allRows.length ?
                 <Box sx={{ width: '100%' }}>
                     <Paper sx={{ width: '100%', mb: 2, border: '1px solid #d3d3d3', borderRadius: '5px' }}>
                         <EnhancedTableToolbar numSelected={selected.length} />

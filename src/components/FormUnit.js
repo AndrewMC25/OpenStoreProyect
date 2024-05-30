@@ -9,10 +9,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useSnackbar } from "notistack";
 import handleReset from "../utils/handleReset";
 import handleDataLoad from "../service/frontend/dataLoadServiceHandler";
+import { useUserContext } from "../context/userContext";
+import { useUnits } from "../hooks/FetchItems";
 
-const FormUnit = ({ units, handleClickOpen, isTableVisible }) => {
-    const [loading, setLoading] = useState(false)
-    const { enqueueSnackbar } = useSnackbar()
+const FormUnit = ({ units, handleClickOpen, isTableVisible, handleClose }) => {
+    const [loading, setLoading] = useState(false);
+    const user = useUserContext();
+    const { enqueueSnackbar } = useSnackbar();
+    const { handleUpdateUnits } = useUnits();
 
     const formSchema = Yup.object().shape({
         name: Yup
@@ -36,7 +40,7 @@ const FormUnit = ({ units, handleClickOpen, isTableVisible }) => {
         initialValues: {
             type: '',
             name: '',
-            abbreviation: ''
+            abbreviation: '',
         },
         onSubmit: async (values) => {
             setLoading(true)
@@ -44,13 +48,18 @@ const FormUnit = ({ units, handleClickOpen, isTableVisible }) => {
                 elements: {
                     name: values.name,
                     type: values.type,
-                    abbreviation: values.abbreviation
+                    abbreviation: values.abbreviation,
+                    user_id: user.id
                 },
                 table: 'UnitType'
             }
             try {
-                await handleDataLoad(data)
-                enqueueSnackbar('successfully edit!', { variant: 'success' })
+                await handleDataLoad(data);
+                enqueueSnackbar('successfully edit!', { variant: 'success' });
+                handleUpdateUnits();
+                if(isTableVisible === false ){
+                    handleClose()
+                };
             } catch (error) {
                 enqueueSnackbar(error, { variant: 'error' })
             }
@@ -90,6 +99,7 @@ const FormUnit = ({ units, handleClickOpen, isTableVisible }) => {
                     <Typography variant="h5" >Create new unit of measurement</Typography>
                     <br />
                     <FormControl
+                        id='type-unit'
                         sx={{
                             width: '80%'
                         }}>

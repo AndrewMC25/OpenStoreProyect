@@ -1,6 +1,10 @@
-import { Box, Button, FormControlLabel, Checkbox, Stack, Typography, TextField } from "@mui/material";
+import { Box, FormControlLabel, Checkbox, Stack, Typography, TextField } from "@mui/material";
 import { useState } from "react";
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
+import stockControl from '../service/frontend/stockControlService'
+import { LoadingButton } from "@mui/lab";
+import { useSnackbar } from "notistack";
+import { useUserContext } from "../context/userContext";
 
 const styles = {
     detallesCarro: {
@@ -22,7 +26,10 @@ const styles = {
     },
 };
 
-const TotalToPay = ({ cart, subtotal }) => {
+const TotalToPay = ({ cart, setCart, subtotal, handleClose }) => {
+    const user = useUserContext();
+    const { enqueueSnackbar } = useSnackbar()
+    const [loading, setLoading] = useState(false)
     const [delivery, setDelivery] = useState(false)
     const [deliveryValue, setDeliveryValue] = useState(0)
     const checkboxValue = () => {
@@ -167,12 +174,23 @@ const TotalToPay = ({ cart, subtotal }) => {
                         alignItems: 'center'      
                     }}
                 >
-                    <Button 
+                    <LoadingButton
+                        loading={loading}
                         variant="contained"
                         padding='6px'
+                        onClick={
+                            async () => {
+                                setLoading(true);
+                                await stockControl({ products: cart, user: user });
+                                handleClose(false);
+                                setCart([]);
+                                enqueueSnackbar('Thanks for your purchase!!', { variant: 'success' });
+                                setLoading(false);
+                            }
+                        }
                     >
                         <DoneOutlineIcon />
-                    </Button>
+                    </LoadingButton>
                     <Box
                         display='flex'
                         flexDirection='row'

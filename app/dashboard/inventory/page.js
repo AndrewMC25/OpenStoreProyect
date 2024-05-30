@@ -1,4 +1,4 @@
-import Inventory from "../../src/components/Inventory"
+import Inventory from "../../../src/components/Inventory"
 
 const InventoryMenu = () => {
     return(
