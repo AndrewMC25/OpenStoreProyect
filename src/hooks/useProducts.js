@@ -1,34 +1,40 @@
+'use client'
+
 import { useSnackbar } from "notistack"
 import { useEffect, useState } from "react"
 import handleItemReader from "../service/frontend/itemReaderServiceHandler"
+import { useUserContext } from "../context/userContext"
 
 export const useProducts = () => {
+    const userData = useUserContext();
     const { enqueueSnackbar } = useSnackbar()
-    const [products, setProducts] = useState(null)
-    const [loading, setLoading] = useState(false)
+    const [products, setProducts] = useState([]);
 
     const getProduct = async (barcode) => {
-        setLoading(true)
-        const data = await handleItemReader({table: 'Product', rule: {condition: "barcode", conditionValue: barcode}})
-        setLoading(false)
+        try {
+            const data = await handleItemReader({ table: 'Product', rule: {condition: "barcode", conditionValue: barcode}, userId: userData.id });
+            return data;
+        } catch (error) {
+            setProducts([]);
+            enqueueSnackbar(error.message, { variant: 'error' });
+        };
+    };
 
-        return data;
-    }
+    const handleUpdateProducts = async () => {
+        try {
+            const data = await handleItemReader({ table: 'Product', rule: {condition: "visible", conditionValue:true}, userId: userData.id });
+            setProducts(data);
+        } catch (error) {
+            setProducts([]);
+            enqueueSnackbar(error.message, { variant: 'error' });
+        };
+    };
 
     useEffect(() => {
-        setLoading(true)
-        const fetchItems = async () => {
-            try {
-                const data = await handleItemReader({table: 'Product', rule: {condition: "visible", conditionValue:true}});
-                setProducts(data);
-            } catch (error) {
-                setProducts(null);
-                enqueueSnackbar(error.message, { variant: 'error' });
-            }
-        }
-        fetchItems()
-        setLoading(false)
-    }, [])
+        if(userData){
+            handleUpdateProducts();
+        };
+    }, [userData, products]);
 
-    return { products, loading, getProduct }
-}
+    return { products, getProduct, handleUpdateProducts };
+};

@@ -2,7 +2,8 @@ import axios from 'axios';
 
 async function handleAccess (token) {
     try {
-        await axios.post('/api/userVerify', {token})
+        const accessToken = await axios.post('/api/userVerify', {token})
+        return accessToken
     } catch (error) {
         console.error(error)
     }

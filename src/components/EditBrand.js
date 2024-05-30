@@ -2,13 +2,15 @@ import { Box, TextField } from "@mui/material";
 import { useState } from "react";
 import { useFormik } from "formik";
 import { LoadingButton } from "@mui/lab";
-import * as Yup from "yup"
-import handleDataUpdate from '../service/frontend/dataUpdateServiceHandler'
+import * as Yup from "yup";
+import handleDataUpdate from '../service/frontend/dataUpdateServiceHandler';
 import { useSnackbar } from "notistack";
+import { useUserContext } from "../context/userContext";
 
 const FormEditBrand = ({ rowBrand, handleClose }) => {
-    const [loading, setLoading] = useState(false)
-    const { enqueueSnackbar } = useSnackbar()
+    const user = useUserContext();
+    const [loading, setLoading] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
 
     const formSchema = Yup.object().shape({
         name: Yup.string()
@@ -29,7 +31,8 @@ const FormEditBrand = ({ rowBrand, handleClose }) => {
                 },
                 table: 'Brand',
                 row: rowBrand.id,
-                id: 'id'
+                id: 'id',
+                userId: user.id
             }
             try {
                 await handleDataUpdate(data)

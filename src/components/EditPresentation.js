@@ -5,10 +5,12 @@ import { LoadingButton } from "@mui/lab";
 import * as Yup from "yup"
 import { useSnackbar } from "notistack";
 import handleDataUpdate from "../service/frontend/dataUpdateServiceHandler";
+import { useUserContext } from "../context/userContext";
 
 const FormEditPresentation = ({ rowPresentation, handleClose }) => {
-    const [loading, setLoading] = useState(false)
-    const { enqueueSnackbar } = useSnackbar()
+    const user = useUserContext();
+    const [loading, setLoading] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
 
     const formSchema = Yup.object().shape({
         name: Yup
@@ -20,7 +22,7 @@ const FormEditPresentation = ({ rowPresentation, handleClose }) => {
             .string()
             .required('Este campo es obligatorio')
             .min(5, 'Minimo 5 caracteres')
-    })
+    });
 
     const formik = useFormik({
         initialValues: {
@@ -35,17 +37,18 @@ const FormEditPresentation = ({ rowPresentation, handleClose }) => {
                 },
                 table: 'ProductPresentation',
                 row: rowPresentation,
-                id: 'id'
-            }
-            setLoading(true)
+                id: 'id',
+                userId: user.id
+            };
+            setLoading(true);
             try {
-                await handleDataUpdate(data)
-                enqueueSnackbar('successfully edit!', { variant: 'success' })
+                await handleDataUpdate(data);
+                enqueueSnackbar('successfully edit!', { variant: 'success' });
             } catch (error) {
-                enqueueSnackbar(error, { variant: 'error' })
-            }
-            setLoading(false)
-            handleClose()
+                enqueueSnackbar(error, { variant: 'error' });
+            };
+            setLoading(false);
+            handleClose();
         },
         validationSchema: formSchema
     })

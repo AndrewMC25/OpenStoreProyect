@@ -56,8 +56,8 @@ const SalesPanel = () => {
 
         const numericValue = parseInt(value, 10)
         const foundProduct = await getProduct(numericValue)
-
-        if(foundProduct !== undefined) {
+        console.log(foundProduct);
+        if(foundProduct.length) {
             setSelectedProduct(foundProduct)
             amountRef.current.focus()
         } else {

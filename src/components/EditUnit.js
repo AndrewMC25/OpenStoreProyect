@@ -5,8 +5,10 @@ import { useState } from "react"
 import * as Yup from "yup"
 import { useSnackbar } from "notistack"
 import handleDataUpdate from "../service/frontend/dataUpdateServiceHandler"
+import { useUserContext } from "../context/userContext"
 
 const FormEditUnit = ({ rowUnit, handleClose }) => {
+    const user = useUserContext();
     const [loading, setLoading] = useState(false)
     const { enqueueSnackbar } = useSnackbar()
 
@@ -44,7 +46,8 @@ const FormEditUnit = ({ rowUnit, handleClose }) => {
                 },
                 table: 'UnitType',
                 row: rowUnit.id,
-                id: 'id'
+                id: 'id',
+                userId: user.id
             }
             try {
                 await handleDataUpdate(data)

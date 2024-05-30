@@ -8,7 +8,6 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import MenuIcon from '@mui/icons-material/Menu';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
-import DeleteIcon from '@mui/icons-material/Delete';
 import Link from "next/link";
 
 const Sidebar = ({ navMenu, setNavMenu }) => {
@@ -63,7 +62,7 @@ const Sidebar = ({ navMenu, setNavMenu }) => {
                     width: '266px'
                 }}
             >
-                <Link href='/SalesPanel' >
+                <Link href='/dashboard/sales-panel' >
                     <Button
                         onClick={() => { setNavMenu(false) }}
                         variant="text"
@@ -79,7 +78,7 @@ const Sidebar = ({ navMenu, setNavMenu }) => {
                         Sales Panel
                     </Button>
                 </Link>
-                <Link href='inventory' >
+                <Link href='/dashboard/inventory' >
                     <Button
                         onClick={() => {
                             setNavMenu(false)
@@ -97,7 +96,7 @@ const Sidebar = ({ navMenu, setNavMenu }) => {
                         Inventory
                     </Button>
                 </Link>
-                <Link href='/'>
+                <Link href='/dashboard/finances'>
                     <Button
                         onClick={() => { setNavMenu(false) }}
                         variant="text"
@@ -111,24 +110,6 @@ const Sidebar = ({ navMenu, setNavMenu }) => {
                         }}
                     >
                         Finances
-                    </Button>
-                </Link>
-                <Link href='paper-bin'>
-                    <Button
-                        onClick={() => {
-                            setNavMenu(false)
-                        }}
-                        variant="text"
-                        size="large"
-                        startIcon={<DeleteIcon />}
-                        sx={{
-                            width: '240px',
-                            margin: '0px 10px',
-                            justifyContent: 'flex-start',
-                            color: '#fff'
-                        }}
-                    >
-                        Paper bin
                     </Button>
                 </Link>
             </Box>
@@ -159,7 +140,7 @@ const Sidebar = ({ navMenu, setNavMenu }) => {
                     width: '266px'
                 }}
             >
-                <Link href='products '>
+                <Link href='/dashboard/products '>
                     <Button
                         onClick={() => {
                             setNavMenu(false)
@@ -177,7 +158,7 @@ const Sidebar = ({ navMenu, setNavMenu }) => {
                         New Product
                     </Button>
                 </Link>
-                <Link href='brands'>
+                <Link href='/dashboard/brands'>
                     <Button
                         onClick={() => {
                             setNavMenu(false)
@@ -195,7 +176,7 @@ const Sidebar = ({ navMenu, setNavMenu }) => {
                         New brand
                     </Button>
                 </Link>
-                <Link href='units'>
+                <Link href='/dashboard/units'>
                     <Button
                         onClick={() => {
                             setNavMenu(false)
@@ -213,7 +194,7 @@ const Sidebar = ({ navMenu, setNavMenu }) => {
                         New unit
                     </Button>
                 </Link>
-                <Link href='presentations'>
+                <Link href='/dashboard/presentations'>
                     <Button
                         onClick={() => {
                             setNavMenu(false)

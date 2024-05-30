@@ -1,25 +1,31 @@
-"use client";
+'use client'
 
-import HandleAccess from '../service/frontend/accessServiceHandler'
+import { useRouter } from 'next/navigation';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { GoogleLogin } from '@react-oauth/google';
-import { Box, Icon, Stack, Typography } from "@mui/material"
-
+import { Box, Stack, Typography } from "@mui/material"
+import HandleAccess from '../service/frontend/accessServiceHandler'
 
 const SignUp = () => {
+    const router = useRouter()
     return(
         <Stack
+            position='relative'
             alignItems='center'
+            justifyContent='center'
+            style={{ height: '100vh', backgroundColor: '#1976d2', margin: 0 }}
         >
             <Stack
                 justifyContent='center'
                 sx={{
-                    width: '400px',
+                    width: '300px',
                     border: '1px solid #d3d3d3',
                     padding: 5,
                     borderRadius: 1,
                     margin: '0px 32px 16px 32px',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    backgroundColor: 'white',
+                    boxShadow: '2px 2px 2px 1px rgba(0, 0, 0, 0.2)'
                 }}
             >
                 <Box
@@ -46,8 +52,13 @@ const SignUp = () => {
                 >
                     <GoogleLogin
                         onSuccess={
-                            credentialResponse => {
-                                HandleAccess(credentialResponse.credential)
+                            async (credentialResponse) => {
+                               try {
+                                    await HandleAccess(credentialResponse.credential)
+                                    router.push('/dashboard')
+                               } catch (error) {
+                                    console.error(error)
+                               }
                             }
                         }
                         auto_select='true'

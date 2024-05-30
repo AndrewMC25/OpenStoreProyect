@@ -1,4 +1,5 @@
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import { useUserContext } from "../context/userContext";
 import { useState } from "react";
 import { useFormik } from "formik";
 import { LoadingButton } from "@mui/lab";
@@ -16,13 +17,16 @@ import handleDataLoad from "../service/frontend/dataLoadServiceHandler";
 import FormBrand from "./FormBrand";
 import FormPresentation from "./FormPresentation";
 import FormUnit from "./FormUnit";
+import { useProducts } from "../hooks/useProducts";
 
 const FormProduct = ({ brands, units, presentations, products, handleClickOpen }) => {
   const [loading, setLoading] = useState(false)
   const [openBrand, setOpenBrand] = useState(false)
   const [openUnit, setOpenUnit] = useState(false)
   const [openPresentation, setOpenPresentation] = useState(false)
+  const user = useUserContext()
   const { enqueueSnackbar } = useSnackbar()
+  const { handleUpdateProducts } = useProducts();
 
   const handleOpenBrand = () => {
     setOpenBrand(true)
@@ -102,21 +106,23 @@ const FormProduct = ({ brands, units, presentations, products, handleClickOpen }
             brand_id: values.brand_id,
             presentation_id: values.presentation_id,
             unit_id: values.unit_id,
-            barcode: values.barcode
+            barcode: values.barcode,
+            user_id: user.id
           },
           table: 'Product'
-      }
+      };
       try {
-        await handleDataLoad(data)
-        enqueueSnackbar('successfully edit!', { variant: 'success' })
+        await handleDataLoad(data);
+        enqueueSnackbar('successfully edit!', { variant: 'success' });
+        handleUpdateProducts();
       } catch (error) {
-        enqueueSnackbar(error, { variant: 'error' })
-      }
-      setLoading(false)
-      handleReset(formik)
+        enqueueSnackbar(error, { variant: 'error' });
+      };
+      setLoading(false);
+      handleReset(formik);
     },
     validationSchema: formSchema
-  })
+  });
 
   return (
     <Stack
@@ -468,17 +474,17 @@ const FormProduct = ({ brands, units, presentations, products, handleClickOpen }
         />
       </Box>
       <AlertDialog title='Create New Brand' open={openBrand} handleClose={handleCloseBrand}>
-        <FormBrand isTableVisible={false} />
+        <FormBrand isTableVisible={false} handleClose={handleCloseBrand} />
       </AlertDialog>
       <AlertDialog title='Create New Unit' open={openUnit} handleClose={handleCloseUnit}>
-        <FormUnit isTableVisible={false} />
+        <FormUnit isTableVisible={false} handleClose={handleCloseUnit} />
       </AlertDialog>
       <AlertDialog title='Create New Presentation' open={openPresentation} handleClose={handleClosePresentation}>
-        <FormPresentation isTableVisible={false} />
+        <FormPresentation isTableVisible={false} handleClose={handleClosePresentation} />
       </AlertDialog>
     </Stack>
   );
-}
+};
 
 
-export default FormProduct
+export default FormProduct;

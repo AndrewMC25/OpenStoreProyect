@@ -4,11 +4,8 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import NavMenu from "@/src/Layout/NavMenu";
-import { CssBaseline } from "@mui/material";
-import AlertBox from '../src/Layout/AlertBox'
-import { GoogleOAuthProvider } from "@react-oauth/google";
 
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,16 +17,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <AlertBox>
-          <CssBaseline />
-          <NavMenu/>
-            <GoogleOAuthProvider
-              clientId="504897621923-epbrurgigh04jv448bnit08lh1nnifoa.apps.googleusercontent.com"
-            >
-              {children}
-            </GoogleOAuthProvider>
-        </AlertBox>
+      <body className={inter.className} style={{ margin: 0 }}>
+        <GoogleOAuthProvider
+            clientId="504897621923-epbrurgigh04jv448bnit08lh1nnifoa.apps.googleusercontent.com"
+        >
+          {children}
+        </GoogleOAuthProvider>
       </body>
     </html>
   );
